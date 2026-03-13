@@ -1,17 +1,7 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ScrollView, 
-  SafeAreaView, 
-  StatusBar, 
-  Platform 
-} from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import { useCarrinho } from '../context/CarrinhoContext';
 
 const PRODUTOS = [
   {
@@ -39,15 +29,7 @@ const PRODUTOS = [
 
 export default function Salgados() {
   const router = useRouter();
-  const [carrinho, setCarrinho] = useState({});
-
-  const alterarQuantidade = (id, operacao) => {
-    setCarrinho((prev) => {
-      const qtdAtual = prev[id] || 0;
-      const novaQtd = operacao === 'soma' ? qtdAtual + 1 : Math.max(0, qtdAtual - 1);
-      return { ...prev, [id]: novaQtd };
-    });
-  };
+  const { carrinho, alterarQuantidade } = useCarrinho();
 
   const totalItens = Object.values(carrinho).reduce((acc, curr) => acc + curr, 0);
   const valorTotal = PRODUTOS.reduce((acc, produto) => {
@@ -62,12 +44,12 @@ export default function Salgados() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      <StatusBar style="light"/>
       
       <View style={styles.container}>
         
         <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/cardapio')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           
@@ -85,13 +67,13 @@ export default function Salgados() {
             const qtd = carrinho[produto.id] || 0;
             return (
               <View key={produto.id} style={styles.card}>
-                <Image source={produto.imagem} style={styles.productImage} />
+                <Image source={produto.imagem} style={styles.productImage} resizeMode="cover" />
                 
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{produto.nome}</Text>
                   <Text style={styles.productDescription}>{produto.descricao}</Text>
                   <Text style={styles.productPrice}>
-                    R$ {produto.preco.toFixed(2).replace('.', ',')}
+                    {produto.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                   </Text>
                 </View>
 
@@ -134,6 +116,7 @@ export default function Salgados() {
             style={[styles.cartButton, totalItens === 0 && styles.cartButtonDisabled]}
             disabled={totalItens === 0}
             activeOpacity={0.8}
+            onPress={() => router.push('/carrinho')}
           >
             <Ionicons 
               name="cart-outline" 
@@ -164,7 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) + 10 : 10,
+    paddingTop: 10,
     paddingBottom: 20,
   },
   backButton: { 
