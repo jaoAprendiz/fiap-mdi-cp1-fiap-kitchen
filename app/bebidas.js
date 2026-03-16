@@ -1,33 +1,35 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, ImageBackground, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useCarrinho } from '../context/CarrinhoContext';
 
 const PRODUTOS = [
   {
     id: '1',
-    nome: 'Coxinha de Frango',
-    descricao: '80g - Crocante por fora, cremosa por dentro',
-    preco: 8.99,
-    imagem: require('../assets/coxinha.jpg'),
+    nome: 'Suco de Laranja',
+    descricao: '400ml - Suco natural espremido na hora, sem adição de açúcar',
+    preco: 9.00,
+    imagem: require('../assets/suco_laranja.jpg'),
   },
   {
     id: '2',
-    nome: 'Esfirra',
-    descricao: '90g - Recheado com carne',
-    preco: 9.50,
-    imagem: require('../assets/esfirra.jpg'),
+    nome: 'Vitamina de Banana',
+    descricao: '400ml - Banana, leite integral e mel batidos na hora',
+    preco: 10.00,
+    imagem: require('../assets/vitamina_banana.jpg'),
   },
   {
     id: '3',
-    nome: 'Pão de queijo',
-    descricao: '70g - Cesta com 6 pães',
-    preco: 7.50,
-    imagem: require('../assets/paodequeijo.jpg'),
+    nome: 'Refrigerante Lata',
+    descricao: '350ml - Coca-Cola, Guaraná Antarctica ou Sprite gelados',
+    preco: 6.00,
+    imagem: require('../assets/refrigerante_lata.jpg'),
   },
 ];
 
-export default function Salgados() {
+export default function Bebidas() {
   const router = useRouter();
   const { carrinho, alterarQuantidade } = useCarrinho();
 
@@ -46,7 +48,7 @@ export default function Salgados() {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar style="light"/>
       
-      <View style={styles.container}>
+      <ImageBackground source={require('../assets/backgroundImage.png')} style={styles.container} resizeMode="cover">
         
         <View style={styles.header}>
           <TouchableOpacity style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/cardapio')}>
@@ -54,7 +56,7 @@ export default function Salgados() {
           </TouchableOpacity>
           
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerTitle}>Salgados</Text>
+            <Text style={styles.headerTitle}>Bebidas</Text>
             <Text style={styles.headerSubtitle}>{totalItens} itens</Text>
           </View>
         </View>
@@ -129,7 +131,7 @@ export default function Salgados() {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ImageBackground>
     </SafeAreaView>
   );
 }
